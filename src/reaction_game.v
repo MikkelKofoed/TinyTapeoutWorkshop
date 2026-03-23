@@ -2,26 +2,26 @@ module reaction_game (
     input  wire clk,
     input  wire rst_n,
 
-    input  wire btn_yellow,   // startknap
-    input  wire btn_blue,     // reaktionsknap
+    input  wire btn_yellow,   // start button
+    input  wire btn_blue,     // reaction button
 
     output reg  led_green,
     output reg  led_red,
     output wire buzzer,
 
     output reg  [6:0] seg,    // a,b,c,d,e,f,g
-    output reg  [1:0] dig     // digit select for 2-cifret display
+    output reg  [1:0] dig     // digit select for 2-digit display
 );
 
     // ============================================================
-    // Juster denne hvis din clock ikke er 1 MHz
+    // Adjust this if your clock is not 1 MHz
     // ============================================================
     localparam integer CLK_HZ        = 1_000_000;
-    localparam integer TICK_10MS_MAX = CLK_HZ / 100;      // 0.01 s
+    localparam integer TICK_10MS_MAX = CLK_HZ / 100;      // 0.01 s tick
     localparam integer DISP_DIV_MAX  = CLK_HZ / 1000;     // display refresh ~1 kHz
 
     // ============================================================
-    // States
+    // State definitions
     // ============================================================
     localparam [2:0]
         S_IDLE  = 3'd0,
@@ -33,7 +33,7 @@ module reaction_game (
     reg [2:0] state;
 
     // ============================================================
-    // Knap-synkronisering + edge detect
+    // Button synchronization and edge detection
     // ============================================================
     reg [1:0] y_sync, b_sync;
     reg y_prev, b_prev;
@@ -59,7 +59,7 @@ module reaction_game (
     end
 
     // ============================================================
-    // Free running counter til pseudo-random delay + buzzer tone
+    // Free running counter used for pseudo-random delay and buzzer tone
     // ============================================================
     reg [31:0] free_counter;
 
@@ -92,21 +92,21 @@ module reaction_game (
     end
 
     // ============================================================
-    // Delay- og reaktionstællere
-    // wait_target_ticks: 200..500 => 2.00 s til 5.00 s
-    // reaction_ticks: hundrededele sekunder, max 99
+    // Delay and reaction time counters
+    // wait_target_ticks: 200..500 => 2.00 s to 5.00 s
+    // reaction_ticks: hundredths of a second (0..99)
     // ============================================================
     reg [8:0] wait_target_ticks;
     reg [8:0] wait_count_ticks;
-    reg [6:0] reaction_ticks;      // 0..99
-    reg [6:0] shown_ticks;         // værdi der vises på display
+    reg [6:0] reaction_ticks;
+    reg [6:0] shown_ticks;
 
-    // pseudo-random: 200 + (0..60)*5 = 200..500
+    // pseudo-random delay: 200 + (0..60)*5 = 200..500
     wire [5:0] rand6 = free_counter[7:2];
     wire [8:0] next_wait_target = 9'd200 + ({3'd0, rand6} * 9'd5);
 
     // ============================================================
-    // State machine
+    // Main state machine
     // ============================================================
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -130,7 +130,7 @@ module reaction_game (
 
                 S_WAIT: begin
                     if (b_rise) begin
-                        // For tidligt tryk
+                        // Early press detected
                         shown_ticks <= 7'd0;
                         state <= S_EARLY;
                     end else if (tick_10ms) begin
@@ -145,6 +145,7 @@ module reaction_game (
 
                 S_GO: begin
                     if (b_rise) begin
+                        // Stop timer and store result
                         shown_ticks <= reaction_ticks;
                         state <= S_SHOW;
                     end else if (tick_10ms) begin
@@ -154,7 +155,7 @@ module reaction_game (
                 end
 
                 S_SHOW: begin
-                    // Nyt spil startes med gul knap
+                    // Restart game with yellow button
                     if (y_rise) begin
                         wait_target_ticks <= next_wait_target;
                         wait_count_ticks  <= 9'd0;
@@ -165,7 +166,7 @@ module reaction_game (
                 end
 
                 S_EARLY: begin
-                    // Nyt spil startes med gul knap
+                    // Restart game with yellow button
                     if (y_rise) begin
                         wait_target_ticks <= next_wait_target;
                         wait_count_ticks  <= 9'd0;
@@ -183,7 +184,7 @@ module reaction_game (
     end
 
     // ============================================================
-    // Outputs: LED + buzzer
+    // Outputs: LEDs and buzzer
     // ============================================================
     assign buzzer = (state == S_GO) ? free_counter[11] : 1'b0;
 
@@ -199,12 +200,7 @@ module reaction_game (
     end
 
     // ============================================================
-    // Display-værdi
-    // IDLE  -> 00
-    // WAIT  -> blank
-    // GO    -> løbende tid
-    // SHOW  -> resultat
-    // EARLY -> EE
+    // Display value selection
     // ============================================================
     reg [3:0] tens;
     reg [3:0] ones;
@@ -218,7 +214,7 @@ module reaction_game (
 
             S_WAIT: begin
                 tens = 4'hF;   // blank
-                ones = 4'hF;   // blank
+                ones = 4'hF;
             end
 
             S_GO: begin
@@ -232,7 +228,7 @@ module reaction_game (
             end
 
             S_EARLY: begin
-                tens = 4'hE;
+                tens = 4'hE;   // display "EE"
                 ones = 4'hE;
             end
 
@@ -244,9 +240,9 @@ module reaction_game (
     end
 
     // ============================================================
-    // Display multiplex
-    // Antager aktiv LOW digit select og aktiv HIGH segmenter.
-    // Hvis dit display er omvendt, skal disse inverteres.
+    // Display multiplexing
+    // Assumes active LOW digit select and active HIGH segments
+    // Adjust if your hardware differs
     // ============================================================
     reg [31:0] disp_div;
     reg disp_sel;
@@ -265,7 +261,9 @@ module reaction_game (
         end
     end
 
-    // BCD/hex-ish til 7-segment
+    // ============================================================
+    // 7-segment encoding
+    // ============================================================
     function [6:0] seg7_encode;
         input [3:0] val;
         begin
@@ -282,7 +280,7 @@ module reaction_game (
                 4'd9: seg7_encode = 7'b1111011;
                 4'hE: seg7_encode = 7'b1001111; // E
                 4'hF: seg7_encode = 7'b0000000; // blank
-                default: seg7_encode = 7'b0000001; // -
+                default: seg7_encode = 7'b0000001; // dash
             endcase
         end
     endfunction
@@ -290,10 +288,10 @@ module reaction_game (
     always @(*) begin
         if (disp_sel == 1'b0) begin
             seg = seg7_encode(ones);
-            dig = 2'b10;   // højre ciffer aktivt
+            dig = 2'b10;
         end else begin
             seg = seg7_encode(tens);
-            dig = 2'b01;   // venstre ciffer aktivt
+            dig = 2'b01;
         end
     end
 
