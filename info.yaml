@@ -19,32 +19,32 @@ pinout:
   # Inputs
   ui[0]: "ui0"
   ui[1]: "ui1"
-  ui[2]: "ui2"
-  ui[3]: "ui3"
+  ui[2]: "Blue button (reaction)"
+  ui[3]: "Yellow button (start)"
   ui[4]: "ui4"
   ui[5]: "ui5"
   ui[6]: "ui6"
   ui[7]: "ui7"
 
   # Outputs
-  uo[0]: "uo0"
-  uo[1]: "uo1"
+  uo[0]: "Red LED"
+  uo[1]: "Green LED"
   uo[2]: "uo2"
   uo[3]: "uo3"
-  uo[4]: "uo4"
-  uo[5]: "uo5"
-  uo[6]: "uo6"
+  uo[4]: "Buzzer"
+  uo[5]: "Digit left"
+  uo[6]: "Digit right"
   uo[7]: "uo7"
 
   # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
-  uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  uio[0]: "Segment A"
+  uio[1]: "Segment B"
+  uio[2]: "Segment C"
+  uio[3]: "Segment D"
+  uio[4]: "Segment E"
+  uio[5]: "Segment F"
+  uio[6]: "Segment G"
+  uio[7]: "uio7"
 
 # Do not change!
 yaml_version: 6
