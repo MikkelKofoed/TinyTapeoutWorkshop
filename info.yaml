@@ -6,7 +6,7 @@ project:
   discord:      ""                                     # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Testing your reactiontime"            # One line description of what your project does
   language:     "Wokwi"                                # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     1000000                                # Clock frequency in Hz (or 0 if not applicable)
   top_module:   "tt_um_reaction_game"
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
