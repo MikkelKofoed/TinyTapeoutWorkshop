@@ -16,7 +16,7 @@ module reaction_game (
     // ============================================================
     // Adjust this if your clock is not 1 MHz
     // ============================================================
-    localparam integer CLK_HZ        = 1_000_000;
+    localparam integer CLK_HZ        = 10_000;
     localparam integer TICK_10MS_MAX = CLK_HZ / 100;      // 0.01 s tick
     localparam integer DISP_DIV_MAX  = CLK_HZ / 1000;     // display refresh ~1 kHz
 
