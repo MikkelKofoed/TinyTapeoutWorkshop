@@ -11,8 +11,8 @@ project:
   top_module:   "tt_um_reaction_game"
 
   source_files:
-    - "src/tt_um_reaction_game.v"
-    - "src/reaction_game.v"
+    - "tt_um_reaction_game.v"
+    - "reaction_game.v"
 
 pinout:
   ui[0]: ""
