@@ -1,22 +1,20 @@
-# Tiny Tapeout project information (Wokwi project)
+# Tiny Tapeout project information
 project:
-  wokwi_id:     456572032892464129                     # Set this to the ID of your Wokwi project (the number from the project's URL)
-  title:        "Reaction game on Simon Says board"    # Project title
-  author:       "Mikkel Heise Kofoed"                  # Your name
-  discord:      ""                                     # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "Testing your reactiontime"            # One line description of what your project does
-  language:     "Wokwi"                                # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     1000000                                # Clock frequency in Hz (or 0 if not applicable)
+  title:        "Reaction game on Simon Says board"
+  author:       "Mikkel Heise Kofoed"
+  discord:      ""
+  description:  "Testing your reaction time"
+  language:     "verilog"
+  clock_hz:     1000000
+  tiles:        "1x1"
+
   top_module:   "tt_um_reaction_game"
 
-  # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  source_files:
+    - "src/tt_um_reaction_game.v"
+    - "src/reaction_game.v"
 
-
-# The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
-# This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
-  # Inputs
   ui[0]: ""
   ui[1]: ""
   ui[2]: "Blue button (reaction)"
@@ -26,7 +24,6 @@ pinout:
   ui[6]: ""
   ui[7]: ""
 
-  # Outputs
   uo[0]: "Red LED"
   uo[1]: "Green LED"
   uo[2]: ""
@@ -36,7 +33,6 @@ pinout:
   uo[6]: "Digit right"
   uo[7]: ""
 
-  # Bidirectional pins
   uio[0]: "Segment A"
   uio[1]: "Segment B"
   uio[2]: "Segment C"
