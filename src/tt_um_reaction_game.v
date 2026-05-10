@@ -1,11 +1,12 @@
-module tt_um_reaction_game (
+module tt_um_reaction_game ( 
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
     input  wire [7:0] uio_in,
     output wire [7:0] uio_out,
     output wire [7:0] uio_oe,
-    input  wire clk,
-    input  wire rst_n
+    input  wire       ena,
+    input  wire       clk,
+    input  wire       rst_n
 );
 
     // ============================================================
@@ -83,7 +84,9 @@ module tt_um_reaction_game (
     assign uio_out[6] = seg[0];
     assign uio_out[7] = 1'b0;
 
-    // Drive the segment outputs, leave uio[7] unused
+    // ============================================================
+    // Enable outputs for the 7-segment display
+    // ============================================================
     assign uio_oe[0] = 1'b1;
     assign uio_oe[1] = 1'b1;
     assign uio_oe[2] = 1'b1;
@@ -92,5 +95,10 @@ module tt_um_reaction_game (
     assign uio_oe[5] = 1'b1;
     assign uio_oe[6] = 1'b1;
     assign uio_oe[7] = 1'b0;
+
+    // ============================================================
+    // Prevent unused signal warnings
+    // ============================================================
+    wire _unused = &{ena, uio_in, 1'b0};
 
 endmodule
